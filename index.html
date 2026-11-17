@@ -155,6 +155,39 @@
   .delete:hover { color: var(--red); }
   .empty { color: var(--muted); text-align: center; padding: 16px 0; font-size: 0.9rem; }
 
+  .activities h2 { font-size: 1rem; margin-bottom: 10px; color: var(--muted); }
+  .activity-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 420px) {
+    .activity-list { grid-template-columns: 1fr; }
+  }
+  .activity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    user-select: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .activity:hover { border-color: var(--accent); }
+  .activity input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--green);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .activity input[type="checkbox"]:checked + span { color: var(--green); }
+
   .settings-row {
     display: flex;
     align-items: center;
@@ -203,6 +236,11 @@
   <div class="card entries">
     <h2 id="entriesTitle">Toegevoegd</h2>
     <div id="entryList"></div>
+  </div>
+
+  <div class="card activities">
+    <h2 id="activitiesTitle">Activiteiten vandaag</h2>
+    <div class="activity-list" id="activityList"></div>
   </div>
 
   <div class="card">
@@ -294,8 +332,11 @@ const FOOD_DB = [
 const STORAGE_KEY = "eiwit-tracker-v1";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+const ACTIVITIES = ["Schermen", "Klimmen", "Basic Fit", "Thuisoefeningen"];
+
 let state = {
   entries: {},
+  activities: {},
   goal: 100,
   customFoods: [],
   offset: 0
@@ -317,6 +358,7 @@ function load() {
       const data = JSON.parse(raw);
       if (data && typeof data === "object") {
         state.entries = data.entries || {};
+        state.activities = data.activities || {};
         state.goal = Number(data.goal) > 0 ? Number(data.goal) : 100;
         state.customFoods = Array.isArray(data.customFoods) ? data.customFoods : [];
       }
@@ -327,6 +369,7 @@ function load() {
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     entries: state.entries,
+    activities: state.activities,
     goal: state.goal,
     customFoods: state.customFoods
   }));
@@ -383,6 +426,28 @@ function render() {
 
   document.getElementById("entriesTitle").textContent =
     state.offset === 0 ? "Vandaag toegevoegd" : "Toegevoegd";
+  document.getElementById("activitiesTitle").textContent =
+    state.offset === 0 ? "Activiteiten vandaag" : "Activiteiten";
+
+  const actEl = document.getElementById("activityList");
+  actEl.innerHTML = "";
+  const done = state.activities[dateKeyForOffset(state.offset)] || [];
+  ACTIVITIES.forEach((a) => {
+    const label = document.createElement("label");
+    label.className = "activity";
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = done.includes(a);
+    cb.addEventListener("change", () => toggleActivity(a, cb.checked));
+
+    const span = document.createElement("span");
+    span.textContent = a;
+
+    label.appendChild(cb);
+    label.appendChild(span);
+    actEl.appendChild(label);
+  });
 
   const listEl = document.getElementById("entryList");
   listEl.innerHTML = "";
@@ -421,6 +486,17 @@ function render() {
       listEl.appendChild(row);
     });
   }
+}
+
+function toggleActivity(name, checked) {
+  const key = dateKeyForOffset(state.offset);
+  const arr = state.activities[key] || (state.activities[key] = []);
+  if (checked && !arr.includes(name)) arr.push(name);
+  if (!checked) {
+    state.activities[key] = arr.filter((x) => x !== name);
+    if (state.activities[key].length === 0) delete state.activities[key];
+  }
+  save();
 }
 
 function removeEntry(index) {

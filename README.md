@@ -13,6 +13,7 @@ Open `index.html` in je browser. Meer is er niet nodig: geen installatie, geen s
 - **Onbekende producten onthouden** — vul eenmalig het eiwit per 100 g in, daarna staat het in de lijst
 - **Dagnavigatie** — blader tussen gisteren, vandaag en morgen; elke dag heeft zijn eigen totaal
 - **Dagdoel** — stel je eiwitdoel in (standaard 100 g) en zie je voortgangsbalk en restant
+- **Activiteiten afvinken** — vink per dag af wat je hebt gedaan: Schermen, Klimmen, Basic Fit of Thuisoefeningen
 - **Lokale opslag** — al je gegevens blijven in je eigen browser (localStorage), niets gaat naar een server
 
 ## Gebruik
