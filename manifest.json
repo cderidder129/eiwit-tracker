@@ -1,6 +1,6 @@
 {
-  "name": "Eiwit Tracker",
-  "short_name": "Eiwit",
+  "name": "Protey",
+  "short_name": "Protey",
   "description": "Houd je dagelijkse eiwitinname en activiteiten bij",
   "start_url": "./index.html",
   "display": "standalone",
