@@ -1,6 +1,6 @@
-# 💪 Eiwit Tracker
+# 💪 Protey
 
-Een simpele, persoonlijke web-app om je dagelijkse eiwitinname bij te houden. Je voert alleen de **voeding** en de **grammen** in — de app rekent het eiwittotaal zelf uit.
+Een simpele, persoonlijke web-app (voorheen "Eiwit Tracker") om je dagelijkse eiwitinname bij te houden. Je voert alleen de **voeding** en de **grammen** in — de app rekent het eiwittotaal zelf uit.
 
 ## Starten
 
