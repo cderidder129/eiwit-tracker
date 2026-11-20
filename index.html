@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Eiwit Tracker</title>
+<meta name="theme-color" content="#0f1420">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root {
     --bg: #0f1420;
@@ -106,6 +110,32 @@
     cursor: pointer;
   }
   .add-btn:hover { filter: brightness(1.1); }
+
+  .quick-add {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .qa-label { color: var(--muted); font-size: 0.8rem; }
+  .chip {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip .p { color: var(--muted); font-size: 0.75rem; margin-left: 4px; }
+  .suggestions .status {
+    padding: 10px 12px;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
 
   .autocomplete { position: relative; flex: 1; }
   .suggestions {
@@ -229,8 +259,9 @@
         <input type="number" id="proteinPer100" placeholder="Eiwit per 100 g (optioneel)" min="0" max="100" step="any">
       </div>
       <button type="submit" class="add-btn">+ Toevoegen</button>
-      <p class="hint">Kies een voeding uit de lijst en het eiwitgehalte wordt automatisch ingevuld. Onbekende voeding? Vul zelf het eiwit per 100 g in.</p>
+      <p class="hint">Niet in de lijst? De app zoekt dan automatisch online (Open Food Facts) naar het eiwitgehalte. Geen internet of geen resultaat? Vul het eiwit per 100 g zelf in — de gegevens worden daarna onthouden.</p>
     </form>
+    <div class="quick-add" id="quickAdd"></div>
   </div>
 
   <div class="card entries">
@@ -339,6 +370,7 @@ let state = {
   activities: {},
   goal: 100,
   customFoods: [],
+  recent: [],
   offset: 0
 };
 
@@ -361,6 +393,7 @@ function load() {
         state.activities = data.activities || {};
         state.goal = Number(data.goal) > 0 ? Number(data.goal) : 100;
         state.customFoods = Array.isArray(data.customFoods) ? data.customFoods : [];
+        state.recent = Array.isArray(data.recent) ? data.recent : [];
       }
     }
   } catch (e) { /* beschadigde data negeren */ }
@@ -371,7 +404,8 @@ function save() {
     entries: state.entries,
     activities: state.activities,
     goal: state.goal,
-    customFoods: state.customFoods
+    customFoods: state.customFoods,
+    recent: state.recent
   }));
 }
 
@@ -486,6 +520,8 @@ function render() {
       listEl.appendChild(row);
     });
   }
+
+  renderQuickAdd();
 }
 
 function toggleActivity(name, checked) {
@@ -497,6 +533,39 @@ function toggleActivity(name, checked) {
     if (state.activities[key].length === 0) delete state.activities[key];
   }
   save();
+}
+
+function addEntry(food, grams, per100) {
+  const key = dateKeyForOffset(state.offset);
+  if (!state.entries[key]) state.entries[key] = [];
+  state.entries[key].push({ food: food, grams: grams, per100: per100, protein: (grams / 100) * per100 });
+  if (!findFood(food)) {
+    state.customFoods.push({ name: food, p: per100 });
+  }
+  state.recent = state.recent.filter(r => r.food.toLowerCase() !== food.toLowerCase());
+  state.recent.unshift({ food: food, grams: grams, per100: per100 });
+  state.recent = state.recent.slice(0, 6);
+  save();
+  render();
+}
+
+function renderQuickAdd() {
+  const el = document.getElementById("quickAdd");
+  el.innerHTML = "";
+  if (state.recent.length === 0) return;
+  const label = document.createElement("span");
+  label.className = "qa-label";
+  label.textContent = "Snel toevoegen:";
+  el.appendChild(label);
+  state.recent.forEach((r) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.title = "Voeg " + r.food + " (" + r.grams + " g) meteen toe";
+    b.innerHTML = r.food + " <span class='p'>" + r.grams + " g</span>";
+    b.addEventListener("click", () => addEntry(r.food, r.grams, r.per100));
+    el.appendChild(b);
+  });
 }
 
 function removeEntry(index) {
@@ -513,29 +582,96 @@ const suggestionsEl = document.getElementById("suggestions");
 let activeIndex = -1;
 let currentMatches = [];
 
-function showSuggestions() {
-  const query = foodInput.value.trim().toLowerCase();
-  currentMatches = [];
-  if (query) {
-    currentMatches = allFoods().filter(f => f.name.toLowerCase().includes(query)).slice(0, 8);
-  }
+let offStatusText = "";
+let offTimer = null;
+let offAbort = null;
+let lastQuery = "";
+
+function rebuildSuggestions() {
   suggestionsEl.innerHTML = "";
   activeIndex = -1;
-
-  if (currentMatches.length === 0) {
-    suggestionsEl.style.display = "none";
-    return;
-  }
-  currentMatches.forEach((f, i) => {
+  currentMatches.forEach((f) => {
     const item = document.createElement("div");
-    item.innerHTML = "<span>" + f.name + "</span><span class='p'>" + f.p + " g/100g</span>";
+    item.className = "sug-item";
+    const label = f.name + (f.brand ? " · " + f.brand : "");
+    item.innerHTML = "<span>" + label + "</span><span class='p'>" + (Math.round(f.p * 10) / 10) + " g/100g</span>";
     item.addEventListener("mousedown", (ev) => {
       ev.preventDefault();
       pickFood(f);
     });
     suggestionsEl.appendChild(item);
   });
-  suggestionsEl.style.display = "block";
+  if (offStatusText) {
+    const st = document.createElement("div");
+    st.className = "status";
+    st.textContent = offStatusText;
+    suggestionsEl.appendChild(st);
+  }
+  suggestionsEl.style.display =
+    (currentMatches.length > 0 || offStatusText) ? "block" : "none";
+}
+
+function showSuggestions() {
+  const query = foodInput.value.trim();
+  lastQuery = query.toLowerCase();
+  currentMatches = [];
+  if (query) {
+    currentMatches = allFoods().filter(f => f.name.toLowerCase().includes(lastQuery)).slice(0, 8);
+  }
+
+  if (offTimer) { clearTimeout(offTimer); offTimer = null; }
+  if (query.length >= 3 && currentMatches.length < 5) {
+    offStatusText = "Online zoeken naar ‘" + query + "’\u2026";
+    offTimer = setTimeout(() => searchOpenFoodFacts(query), 400);
+  } else {
+    offStatusText = "";
+    if (offAbort) { offAbort.abort(); offAbort = null; }
+  }
+  rebuildSuggestions();
+}
+
+async function searchOpenFoodFacts(query) {
+  if (offAbort) offAbort.abort();
+  offAbort = new AbortController();
+  try {
+    const url = "https://world.openfoodfacts.org/cgi/search.pl?search_terms=" +
+      encodeURIComponent(query) +
+      "&search_simple=1&action=process&json=1&page_size=12" +
+      "&fields=product_name,product_name_nl,brands,nutriments";
+    const res = await fetch(url, { signal: offAbort.signal });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    if (foodInput.value.trim().toLowerCase() !== lastQuery) return;
+
+    const seen = new Set(currentMatches.map(f => f.name.toLowerCase()));
+    (data.products || []).forEach((prod) => {
+      const n = prod.nutriments;
+      const raw = n ? n.proteins_100g : undefined;
+      const name = (prod.product_name_nl && prod.product_name_nl.trim()) ||
+                   (prod.product_name && prod.product_name.trim()) || "";
+      const num = raw === undefined || raw === null ? NaN : Math.round(parseFloat(raw) * 10) / 10;
+      if (!name || isNaN(num) || num < 0 || num > 100) return;
+      const key = name.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      currentMatches.push({
+        name: name,
+        brand: (prod.brands || "").split(",")[0].trim(),
+        p: num,
+        source: "off"
+      });
+    });
+    currentMatches = currentMatches.slice(0, 10);
+    offStatusText = currentMatches.some(f => f.source === "off")
+      ? ""
+      : "Geen online resultaten gevonden — vul het eiwit zelf in.";
+    rebuildSuggestions();
+  } catch (err) {
+    if (err && err.name === "AbortError") return;
+    if (foodInput.value.trim().toLowerCase() !== lastQuery) return;
+    offStatusText = "Online zoeken niet beschikbaar — vul het eiwit zelf in.";
+    rebuildSuggestions();
+  }
 }
 
 function pickFood(f) {
@@ -551,7 +687,7 @@ foodInput.addEventListener("blur", () => {
   setTimeout(() => { suggestionsEl.style.display = "none"; }, 100);
 });
 foodInput.addEventListener("keydown", (ev) => {
-  const items = suggestionsEl.querySelectorAll("div");
+  const items = suggestionsEl.querySelectorAll("div.sug-item");
   if (suggestionsEl.style.display !== "block" || items.length === 0) return;
   if (ev.key === "ArrowDown") {
     ev.preventDefault();
@@ -559,7 +695,7 @@ foodInput.addEventListener("keydown", (ev) => {
   } else if (ev.key === "ArrowUp") {
     ev.preventDefault();
     activeIndex = (activeIndex - 1 + items.length) % items.length;
-  } else if (ev.key === "Enter" && activeIndex >= 0) {
+  } else if (ev.key === "Enter" && activeIndex >= 0 && activeIndex < currentMatches.length) {
     ev.preventDefault();
     pickFood(currentMatches[activeIndex]);
     return;
@@ -585,27 +721,13 @@ document.getElementById("entryForm").addEventListener("submit", (ev) => {
     if (known) {
       per100 = known.p;
     } else {
-      alert("Vul het eiwitgehalte per 100 g in voor '" + food + "'. Dat wordt daarna onthouden.");
+      alert("Vul het eiwitgehalte per 100 g in voor '" + food + "'. Tip: kies het product in de suggestielijst (ook online zoekresultaten), dan wordt het automatisch ingevuld.");
       proteinInput.focus();
       return;
     }
   }
 
-  const key = dateKeyForOffset(state.offset);
-  if (!state.entries[key]) state.entries[key] = [];
-  state.entries[key].push({
-    food: food.charAt(0).toUpperCase() + food.slice(1),
-    grams: grams,
-    per100: per100,
-    protein: (grams / 100) * per100
-  });
-
-  if (!findFood(food)) {
-    state.customFoods.push({ name: food.charAt(0).toUpperCase() + food.slice(1), p: per100 });
-  }
-
-  save();
-  render();
+  addEntry(food.charAt(0).toUpperCase() + food.slice(1), grams, per100);
 
   foodInput.value = "";
   proteinInput.value = "";
