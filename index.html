@@ -4,21 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Eiwit Tracker</title>
-<meta name="theme-color" content="#0f1420">
+<meta name="theme-color" content="#101014">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root {
-    --bg: #0f1420;
-    --card: #1a2130;
-    --card2: #212a3d;
-    --text: #e8edf5;
-    --muted: #8b98ad;
-    --accent: #4f8cff;
+    --bg: #101014;
+    --card: #17171d;
+    --card2: #1f1f26;
+    --text: #f3f1f4;
+    --muted: #9b94a1;
+    --accent: #e8384a;
+    --rose: #f27f96;
     --green: #34c98e;
     --red: #ff6b6b;
-    --border: #2c3648;
+    --border: #2a2a33;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -75,11 +76,11 @@
   }
   .progress-bar {
     height: 100%;
-    background: var(--green);
+    background: linear-gradient(90deg, var(--rose), var(--accent));
     border-radius: 999px;
     transition: width 0.3s ease;
   }
-  .progress-bar.over { background: var(--accent); }
+  .progress-bar.over { background: var(--green); }
 
   form .row { display: flex; gap: 8px; }
   form .row + .row { margin-top: 8px; }
@@ -100,7 +101,7 @@
   .add-btn {
     width: 100%;
     margin-top: 10px;
-    background: var(--accent);
+    background: linear-gradient(135deg, #f15260, #c82032);
     border: none;
     color: #fff;
     font-size: 1rem;
@@ -212,11 +213,11 @@
   .activity input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: var(--green);
+    accent-color: var(--rose);
     cursor: pointer;
     flex-shrink: 0;
   }
-  .activity input[type="checkbox"]:checked + span { color: var(--green); }
+  .activity input[type="checkbox"]:checked + span { color: var(--rose); }
 
   .settings-row {
     display: flex;
