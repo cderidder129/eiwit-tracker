@@ -198,23 +198,22 @@
     transition: opacity 0.45s ease;
   }
   #splash.hidden { opacity: 0; pointer-events: none; }
-  .splash-card {
-    width: 190px;
-    padding: 28px 20px 24px;
-    background: linear-gradient(180deg, #1e1e22, #0a0a0d);
-    border: 2px solid #ffffff;
+  #splash .splash-content { display: flex; flex-direction: column; align-items: center; }
+  .splash-icon {
+    width: 150px;
+    height: 150px;
+    display: block;
+    border: 2.5px solid #ffffff;
     border-radius: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
+    background: #0d0d10;
   }
-  .splash-card svg { width: 100px; height: auto; display: block; }
   .splash-name {
+    margin-top: 16px;
     color: #ffffff;
     font-weight: 700;
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     letter-spacing: 0.5px;
+    text-align: center;
   }
 
   .activities h2 { font-size: 1rem; margin-bottom: 10px; color: var(--muted); }
@@ -263,20 +262,8 @@
 </head>
 <body>
 <div id="splash">
-  <div class="splash-card">
-    <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Protey logo">
-      <defs>
-        <linearGradient id="dbgrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#ff5563"/>
-          <stop offset="1" stop-color="#9e1428"/>
-        </linearGradient>
-      </defs>
-      <rect x="28" y="17.5" width="44" height="5" rx="2.5" fill="url(#dbgrad)"/>
-      <rect x="18" y="10" width="12" height="20" rx="2.5" fill="url(#dbgrad)"/>
-      <rect x="70" y="10" width="12" height="20" rx="2.5" fill="url(#dbgrad)"/>
-      <rect x="32" y="13" width="8" height="14" rx="1.8" fill="url(#dbgrad)"/>
-      <rect x="60" y="13" width="8" height="14" rx="1.8" fill="url(#dbgrad)"/>
-    </svg>
+  <div class="splash-content">
+    <img class="splash-icon" src="icon-192.png" alt="Protey logo">
     <div class="splash-name">Protey</div>
   </div>
 </div>
@@ -816,8 +803,8 @@ render();
     splash.classList.add("hidden");
     setTimeout(() => { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 600);
   }
-  window.addEventListener("load", () => setTimeout(hideSplash, 700));
-  setTimeout(hideSplash, 2500); /* vangnet als load al geweest is */
+  window.addEventListener("load", () => setTimeout(hideSplash, 1000));
+  setTimeout(hideSplash, 3500); /* vangnet als load al geweest is */
 })();
 </script>
 </body>
