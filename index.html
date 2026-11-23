@@ -197,13 +197,34 @@
     z-index: 999;
     transition: opacity 0.7s ease;
   }
+  .splash-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    max-width: 340px;
+    padding: 0 20px;
+  }
+  .egg-svg { width: 96px; height: auto; display: block; animation: egg-wobble 0.9s ease-in-out infinite alternate; }
+  @keyframes egg-wobble {
+    from { transform: rotate(-4deg); }
+    to   { transform: rotate(4deg); }
+  }
   .splash-name {
     color: #ffffff;
+    text-align: center;
     font-weight: 600;
-    font-size: 2.4rem;
-    letter-spacing: 2px;
+    font-size: 1.15rem;
+    line-height: 1.45;
     opacity: 0;
     transition: opacity 0.6s ease;
+  }
+  .splash-name small {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--rose);
   }
   #splash.shown .splash-name { opacity: 1; }
   #splash.hidden { opacity: 0; pointer-events: none; }
@@ -256,6 +277,134 @@
     #celebrate { display: none !important; }
   }
 
+  /* Proty-kaart */
+  .proty-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .proty-card .art { width: 96px; height: 112px; flex-shrink: 0; }
+  .proty-card .art svg { width: 100%; height: 100%; display: block; }
+  .proty-card .info { flex: 1; min-width: 0; }
+  .proty-card h3 { margin: 0 0 2px; font-size: 1rem; }
+  .proty-card .desc { color: var(--muted); font-size: 0.85rem; line-height: 1.4; }
+  .proty-card .pp { margin-top: 6px; font-size: 0.9rem; }
+  .proty-card .pp b { color: var(--rose); }
+  .proty-card .next { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+  .proty-progress {
+    background: var(--card2);
+    border-radius: 999px;
+    height: 8px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .proty-progress div { height: 100%; background: linear-gradient(90deg, var(--rose), var(--accent)); border-radius: 999px; transition: width 0.4s ease; }
+  .game-btn {
+    margin-top: 10px;
+    width: 100%;
+    background: linear-gradient(135deg, #f15260, #c82032);
+    border: none;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 11px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .game-btn:hover { filter: brightness(1.1); }
+
+  /* Unlock-overlay */
+  #unlock {
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 16, 20, 0.96);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  #unlock.open { display: flex; }
+  #unlock .u-box { max-width: 320px; padding: 20px; }
+  #unlock .u-title { color: var(--rose); font-weight: 700; font-size: 1.1rem; letter-spacing: 1px; }
+  #unlock .u-art { width: 150px; height: 175px; margin: 14px auto 0;
+    animation: u-pop 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) forwards; }
+  #unlock .u-art svg { width: 100%; height: 100%; }
+  @keyframes u-pop { 0% { transform: scale(0.2) rotate(-14deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+  #unlock h3 { margin: 12px 0 4px; font-size: 1.3rem; }
+  #unlock p { color: var(--muted); font-size: 0.9rem; line-height: 1.5; margin: 0 0 14px; }
+  #unlock .u-tip { color: var(--muted); font-size: 0.75rem; }
+
+  /* Minigame: Vang de eiwitten */
+  #game {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+  }
+  #game.open { display: flex; }
+  .game-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px 8px;
+  }
+  .game-top h3 { font-size: 1rem; margin: 0; }
+  .game-stats { display: flex; gap: 14px; font-weight: 700; font-size: 1.05rem; }
+  .game-stats .g-score { color: var(--green); }
+  .game-stats .g-tijd { color: var(--rose); }
+  #gameItems {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .fall-item {
+    position: absolute;
+    top: -60px;
+    cursor: pointer;
+    user-select: none;
+    line-height: 1;
+  }
+  .game-proty {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 72px;
+    height: 84px;
+    pointer-events: none;
+  }
+  .game-result {
+    position: absolute;
+    inset: 0;
+    background: rgba(16, 16, 20, 0.94);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+  .game-result.open { display: flex; }
+  .game-result h3 { margin-bottom: 6px; }
+  .game-result .rs-score { font-size: 2rem; font-weight: 700; color: var(--green); }
+  .game-result .rs-best { color: var(--muted); font-size: 0.85rem; margin: 4px 0 10px; }
+  .game-result .rs-msg { color: var(--muted); margin-bottom: 16px; }
+  .game-actions { display: flex; flex-direction: column; gap: 8px; }
+  .game-actions button {
+    background: linear-gradient(135deg, #f15260, #c82032);
+    border: none;
+    color: #fff;
+    padding: 11px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .game-actions .close-g { background: var(--card2); border: 1px solid var(--border); }
+
   .activities h2 { font-size: 1rem; margin-bottom: 10px; color: var(--muted); }
   .activity-list {
     display: grid;
@@ -302,7 +451,15 @@
 </head>
 <body>
 <div id="splash">
-  <div class="splash-name">Protey</div>
+  <div class="splash-content">
+    <svg class="egg-svg" viewBox="0 0 100 128" aria-hidden="true">
+      <path d="M50 8 C 72 8, 89 42, 89 76 A 39 44 0 0 1 11 76 C 11 42, 28 8, 50 8 Z" fill="#fff6dd" stroke="#d9c9a0" stroke-width="2.5"/>
+      <ellipse cx="36" cy="40" rx="9" ry="16" fill="#ffffff" transform="rotate(-18 36 40)"/>
+      <circle cx="63" cy="86" r="5" fill="#f3e3b8"/>
+      <circle cx="41" cy="102" r="4" fill="#f3e3b8"/>
+    </svg>
+    <div class="splash-name" id="splashText"></div>
+  </div>
 </div>
 
 <div class="app">
@@ -356,6 +513,8 @@
     </div>
   </div>
 
+  <div class="card proty-card" id="protyCard"></div>
+
   <p class="footer">Alles wordt lokaal in je browser opgeslagen.</p>
 </div>
 
@@ -365,6 +524,38 @@
     <circle class="cc-ring" cx="60" cy="60" r="52"/>
     <path class="cc-tick" d="M38 62 L54 78 L84 44"/>
   </svg>
+</div>
+
+<div id="unlock">
+  <div class="u-box">
+    <div class="u-title" id="uTitle"></div>
+    <div class="u-art" id="uArt"></div>
+    <h3 id="uName"></h3>
+    <p id="uDesc"></p>
+    <div class="u-tip">Tik om door te gaan</div>
+  </div>
+</div>
+
+<div id="game">
+  <div class="game-top">
+    <h3>🎮 Vang de eiwitten</h3>
+    <div class="game-stats"><span class="g-score" id="gScore">0</span><span class="g-tijd" id="gTijd">30</span></div>
+  </div>
+  <div id="gameItems">
+    <div class="game-proty" id="gameProty"></div>
+    <div class="game-result" id="gameResult">
+      <div>
+        <h3>⏱️ Tijd voorbij!</h3>
+        <div class="rs-score" id="rsScore">0</div>
+        <div class="rs-best" id="rsBest"></div>
+        <div class="rs-msg" id="rsMsg"></div>
+        <div class="game-actions">
+          <button type="button" id="gameAgain">Speel opnieuw</button>
+          <button type="button" class="close-g" id="gameClose">Terug naar Protey</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -448,6 +639,12 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 const ACTIVITIES = ["Schermen", "Klimmen", "Basic Fit", "Thuisoefeningen"];
 
+const PROTY_LEVELS = [
+  { n: 5,  name: "Rookie", desc: "Het enthousiaste beginnende kuiken." },
+  { n: 10, name: "Sporty", desc: "De eerste spieren verschijnen. Het zelfvertrouwen groeit." },
+  { n: 15, name: "Rebel",  desc: "De attitude is er! Proty neemt zichzelf behoorlijk serieus." }
+];
+
 let state = {
   entries: {},
   activities: {},
@@ -455,6 +652,9 @@ let state = {
   customFoods: [],
   recent: [],
   celebrated: {},
+  scored: {},
+  pp: 0,
+  gameBest: 0,
   offset: 0
 };
 
@@ -479,6 +679,9 @@ function load() {
         state.customFoods = Array.isArray(data.customFoods) ? data.customFoods : [];
         state.recent = Array.isArray(data.recent) ? data.recent : [];
         state.celebrated = data.celebrated || {};
+        state.scored = data.scored || {};
+        state.pp = Number(data.pp) > 0 ? Number(data.pp) : 0;
+        state.gameBest = Number(data.gameBest) > 0 ? Number(data.gameBest) : 0;
       }
     }
   } catch (e) { /* beschadigde data negeren */ }
@@ -491,7 +694,10 @@ function save() {
     goal: state.goal,
     customFoods: state.customFoods,
     recent: state.recent,
-    celebrated: state.celebrated
+    celebrated: state.celebrated,
+    scored: state.scored,
+    pp: state.pp,
+    gameBest: state.gameBest
   }));
 }
 
@@ -608,6 +814,7 @@ function render() {
   }
 
   renderQuickAdd();
+  renderProty();
 }
 
 function toggleActivity(name, checked) {
@@ -640,14 +847,37 @@ function addEntry(food, grams, per100) {
   }
 }
 
+function protyLevelForPP(pp) {
+  let lvl = 0;
+  PROTY_LEVELS.forEach((l, i) => { if (pp >= l.n) lvl = i + 1; });
+  return lvl;
+}
+
 function celebrate(key) {
+  if (!state.scored[key]) {
+    state.scored[key] = true;
+    state.pp++;
+  }
+  const newly = state.celebrated[key] !== true;
   state.celebrated[key] = true;
   save();
-  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const c = document.getElementById("celebrate");
-  c.classList.add("active");
-  confettiBurst();
-  setTimeout(() => c.classList.remove("active"), 2300);
+  if (newly && !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+    const c = document.getElementById("celebrate");
+    c.classList.add("active");
+    confettiBurst();
+    setTimeout(() => c.classList.remove("active"), 2300);
+  }
+  renderProty();
+  /* unlock-check: is er een drempel precies bereikt die nog niet gevierd is? */
+  PROTY_LEVELS.forEach((l, i) => {
+    if (state.pp === l.n && !state["u" + l.n]) {
+      state["u" + l.n] = true;
+      save();
+      const delay = newly ? 2400 : 100;
+      setTimeout(() => showUnlock(i + 1), delay);
+    }
+  });
+  updateSplashText();
 }
 
 function confettiBurst() {
@@ -674,6 +904,241 @@ function confettiBurst() {
     ], { duration: 1200 + Math.random() * 900, easing: "cubic-bezier(.2, .6, .4, 1)", fill: "forwards" });
   }
   setTimeout(() => { layer.innerHTML = ""; }, 2400);
+}
+
+/* ---------- Proty: tekenfuncties ---------- */
+
+function protySVG(level) {
+  const g = [];  /* svg-delen */
+  g.push('<ellipse cx="60" cy="80" rx="45" ry="52" fill="#ffd93d" stroke="#e2b60a" stroke-width="2.5"/>');
+  g.push('<ellipse cx="60" cy="102" rx="27" ry="24" fill="#fff7da"/>');
+  /* vleugels */
+  const wingR = level >= 2 ? 17 : 13;   /* gespierder bij Sporty/Rebel */
+  g.push('<ellipse cx="15" cy="84" rx="' + (wingR + 2) + '" ry="' + (wingR + 8) + '" fill="#f4c520" stroke="#e2b60a" stroke-width="2"/>');
+  g.push('<ellipse cx="105" cy="84" rx="' + (wingR + 2) + '" ry="' + (wingR + 8) + '" fill="#f4c520" stroke="#e2b60a" stroke-width="2"/>');
+  /* spierbulten vanaf Sporty */
+  if (level >= 2) {
+    g.push('<circle cx="19" cy="72" r="9" fill="#f4c520" stroke="#e2b60a" stroke-width="2"/>');
+    g.push('<circle cx="101" cy="72" r="9" fill="#f4c520" stroke="#e2b60a" stroke-width="2"/>');
+  }
+  /* pootjes */
+  g.push('<ellipse cx="48" cy="133" rx="9" ry="5" fill="#ff9838"/>');
+  g.push('<ellipse cx="72" cy="133" rx="9" ry="5" fill="#ff9838"/>');
+  /* gezicht */
+  if (level === 3) {
+    g.push('<rect x="30" y="60" width="60" height="17" rx="8" fill="#1c1c22"/>');            /* zonnebril */
+    g.push('<rect x="42" y="60" width="36" height="3" fill="rgba(255,255,255,0.28)"/>');   /* glans */
+    g.push('<path d="M46 94 Q60 100 74 94" stroke="#5a3a00" stroke-width="4" fill="none" stroke-linecap="round"/>'); /* grijns */
+  } else {
+    g.push('<circle cx="44" cy="70" r="7.5" fill="#24242a"/>');
+    g.push('<circle cx="76" cy="70" r="7.5" fill="#24242a"/>');
+    g.push('<circle cx="46.5" cy="67.5" r="2.4" fill="#fff"/>');
+    g.push('<circle cx="78.5" cy="67.5" r="2.4" fill="#fff"/>');
+    g.push('<path d="M54 88 Q60 94 66 88" stroke="#5a3a00" stroke-width="3.5" fill="none" stroke-linecap="round"/>');
+  }
+  g.push('<polygon points="52,80 68,80 60,90" fill="#ff9838"/>');   /* snavel */
+  /* uitrusting per niveau */
+  if (level === 1) {
+    g.push('<rect x="26" y="34" width="68" height="11" rx="5.5" fill="#e8384a"/>');
+    g.push('<rect x="42" y="34" width="36" height="11" fill="#ffffff"/>');
+    g.push('<ellipse cx="20" cy="44" rx="3" ry="4.5" fill="#7db8ff"/>');   /* zweet */
+    g.push('<ellipse cx="100" cy="40" rx="3" ry="4.5" fill="#7db8ff"/>');
+    /* mini-dumbbells in vleugels */
+    g.push('<rect x="4" y="96" width="22" height="5" rx="2.5" fill="#d8dbe2"/>');
+    g.push('<rect x="2" y="92" width="6" height="13" rx="2.5" fill="#9aa3b2"/>');
+    g.push('<rect x="22" y="92" width="6" height="13" rx="2.5" fill="#9aa3b2"/>');
+    g.push('<rect x="94" y="96" width="22" height="5" rx="2.5" fill="#d8dbe2"/>');
+    g.push('<rect x="92" y="92" width="6" height="13" rx="2.5" fill="#9aa3b2"/>');
+    g.push('<rect x="112" y="92" width="6" height="13" rx="2.5" fill="#9aa3b2"/>');
+  }
+  if (level >= 1) {  /* short: blauw-been at Rookie & Rebel, rood at Sporty */
+    const shortColor = level === 2 ? "#e8384a" : "#4f8cff";
+    g.push('<rect x="34" y="112" width="52" height="7" rx="3.5" fill="#ffffff"/>');   /* tailleband */
+    g.push('<rect x="34" y="117" width="52" height="15" rx="6" fill="' + shortColor + '"/>');
+    if (level === 2) {
+      g.push('<rect x="42" y="117" width="9" height="15" fill="rgba(255,255,255,0.55)"/>');
+      g.push('<rect x="69" y="117" width="9" height="15" fill="rgba(255,255,255,0.55)"/>');
+    }
+  }
+  if (level === 2) {  /* koptelefoon */
+    g.push('<path d="M24 62 A 42 42 0 0 1 96 62" stroke="#9aa3b2" stroke-width="6" fill="none" stroke-linecap="round"/>');
+    g.push('<rect x="16" y="56" width="14" height="24" rx="6" fill="#9aa3b2"/>');
+    g.push('<rect x="90" y="56" width="14" height="24" rx="6" fill="#9aa3b2"/>');
+    g.push('<rect x="19" y="62" width="8" height="12" rx="4" fill="#e8384a"/>');
+    g.push('<rect x="93" y="62" width="8" height="12" rx="4" fill="#e8384a"/>');
+    g.push('<path d="M88 30 l2.5 5 5.5 .8-4 3.8 1 5.4-5-2.6-5 2.6 1-5.4-4-3.8 5.5-.8z" fill="#ffffff"/>');  /* ster */
+  }
+  if (level === 3) {  /* bandana */
+    g.push('<path d="M22 44 Q60 30 98 44 L94 54 Q60 42 26 54 Z" fill="#e8384a"/>');
+    g.push('<circle cx="44" cy="47" r="2" fill="#ffffff"/>');
+    g.push('<circle cx="62" cy="45" r="2" fill="#ffffff"/>');
+    g.push('<circle cx="80" cy="47" r="2" fill="#ffffff"/>');
+    g.push('<path d="M98 44 L112 50 L102 58 Z" fill="#c82032"/>');                     /* knoop */
+  }
+  return '<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Proty">' + g.join("") + '</svg>';
+}
+
+function eggSVG() {
+  return '<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ei">' +
+    '<path d="M50 8 C 72 8, 89 42, 89 76 A 39 44 0 0 1 11 76 C 11 42, 28 8, 50 8 Z" fill="#fff6dd" stroke="#d9c9a0" stroke-width="2.5"/>' +
+    '<ellipse cx="36" cy="40" rx="9" ry="16" fill="#ffffff" transform="rotate(-18 36 40)"/>' +
+    '<circle cx="63" cy="86" r="5" fill="#f3e3b8"/><circle cx="41" cy="102" r="4" fill="#f3e3b8"/></svg>';
+}
+
+function nextLevelInfo() {
+  const lvl = protyLevelForPP(state.pp);
+  if (lvl >= PROTY_LEVELS.length) return null;
+  return PROTY_LEVELS[lvl];
+}
+
+function updateSplashText() {
+  const el = document.getElementById("splashText");
+  if (!el) return;
+  const nxt = nextLevelInfo();
+  if (nxt) {
+    el.innerHTML = "Unlock " + nxt.name + " Proty na " + nxt.n + " bereikte dagdoelen" +
+      (state.pp > 0 ? "<small>" + state.pp + "/" + nxt.n + "</small>" : "");
+  } else {
+    el.innerHTML = "Rebel Proty is klaar voor actie<small>Speel de minigame in de Proty-kaart</small>";
+  }
+}
+
+function renderProty() {
+  const el = document.getElementById("protyCard");
+  const lvl = protyLevelForPP(state.pp);
+  const nxt = nextLevelInfo();
+  let art, title, desc, extra = "";
+  if (lvl === 0) {
+    art = eggSVG();
+    title = "Wie is Proty?";
+    desc = "Haal je dagdoel om Proty te ontgrendelen. Elk bereikt dagdoel = 1 Protey-punt.";
+  } else {
+    art = protySVG(lvl);
+    const L = PROTY_LEVELS[lvl - 1];
+    title = "Proty · " + L.name;
+    desc = L.desc;
+  }
+  if (nxt) {
+    const rest = nxt.n - state.pp;
+    extra = '<div class="pp"><b>' + state.pp + '</b> Protey-punten</div>' +
+      '<div class="next">Nog ' + rest + ' dagdoel' + (rest === 1 ? "" : "en") + ' tot ' + nxt.name + ' Proty</div>' +
+      '<div class="proty-progress"><div style="width:' + Math.min(state.pp / nxt.n * 100, 100) + '%"></div></div>';
+  } else {
+    extra = '<div class="pp"><b>' + state.pp + '</b> Protey-punten</div>' +
+      '<button type="button" class="game-btn">🎮 Speel \u201cVang de eiwitten\u201d met Rebel Proty</button>';
+  }
+  el.innerHTML = '<div class="art">' + art + '</div>' +
+    '<div class="info"><h3>' + title + '</h3><div class="desc">' + desc + '</div>' + extra + '</div>';
+  const btn = el.querySelector(".game-btn");
+  if (btn) btn.addEventListener("click", gameOpen);
+}
+
+/* ---------- Unlock-overlay ---------- */
+
+function showUnlock(level) {
+  const L = PROTY_LEVELS[level - 1];
+  document.getElementById("uTitle").textContent = "Niveau " + level + " unlocked!";
+  document.getElementById("uArt").innerHTML = protySVG(level);
+  document.getElementById("uName").textContent = L.name + " Proty";
+  document.getElementById("uDesc").textContent = L.desc;
+  const o = document.getElementById("unlock");
+  o.classList.add("open");
+  const close = () => { o.classList.remove("open"); o.removeEventListener("click", close); };
+  o.addEventListener("click", close);
+  setTimeout(close, 4500);
+}
+
+/* ---------- Minigame: Vang de eiwitten ---------- */
+
+const GAME_GOEDE = ["🥚", "🍗", "🐟", "🥛", "🧀", "🥩"];
+const GAME_SLECHT = ["🍬", "🍩", "🍟", "🍰", "🥤"];
+let gameTimers = [];
+
+function gameOpen() {
+  if (protyLevelForPP(state.pp) < 3) return;
+  const g = document.getElementById("game");
+  g.classList.add("open");
+  document.getElementById("gameResult").classList.remove("open");
+  document.getElementById("gameProty").innerHTML = protySVG(3);
+  setTimeout(gameStart, 300);
+}
+
+function gameStart() {
+  let score = 0;
+  let tijd = 30;
+  const itemsEl = document.getElementById("gameItems");
+  const scoreEl = document.getElementById("gScore");
+  const tijdEl = document.getElementById("gTijd");
+  scoreEl.textContent = "0";
+  tijdEl.textContent = String(tijd);
+
+  gameTimers.push(setInterval(() => {
+    const goed = Math.random() < 0.62;
+    const bron = goed ? GAME_GOEDE : GAME_SLECHT;
+    const emoji = bron[Math.floor(Math.random() * bron.length)];
+    gameSpawn(itemsEl, emoji, goed, (v) => {
+      score = Math.max(0, score + v);
+      scoreEl.textContent = String(score);
+    });
+  }, 420));
+
+  gameTimers.push(setInterval(() => {
+    tijd--;
+    tijdEl.textContent = String(Math.max(tijd, 0));
+    if (tijd <= 0) gameEnd(score);
+  }, 1000));
+}
+
+function gameSpawn(itemsEl, emoji, goed, onScore) {
+  const el = document.createElement("div");
+  el.className = "fall-item";
+  el.textContent = emoji;
+  el.style.left = (8 + Math.random() * 74) + "%";
+  el.style.fontSize = (34 + Math.random() * 14) + "px";
+  itemsEl.appendChild(el);
+  const dur = 2500 + Math.random() * 1300;
+  const h = itemsEl.clientHeight || window.innerHeight;
+  const anim = el.animate(
+    [{ transform: "translateY(-60px)" }, { transform: "translateY(" + (h + 90) + "px)" }],
+    { duration: dur, easing: "linear", fill: "forwards" }
+  );
+  el.addEventListener("pointerdown", (ev) => {
+    ev.preventDefault();
+    onScore(goed ? 1 : -1);
+    el.textContent = goed ? "✅" : "❌";
+    setTimeout(() => el.remove(), 260);
+  });
+  gameTimers.push(setTimeout(() => el.remove(), dur + 120));
+  gameTimers.push(setTimeout(() => anim.cancel(), dur + 140));
+}
+
+function gameEnd(score) {
+  gameTimers.forEach((id) => { clearInterval(id); clearTimeout(id); });
+  gameTimers = [];
+  document.getElementById("gameItems").innerHTML = '<div class="game-proty">' + protySVG(3) + '</div>' +
+    document.getElementById("gameResult").outerHTML;
+  if (score > (state.gameBest || 0)) {
+    state.gameBest = score;
+    save();
+  }
+  document.getElementById("rsScore").textContent = String(score);
+  document.getElementById("rsBest").textContent = state.gameBest === score
+    ? "🏆 Nieuw record!"
+    : "Record: " + state.gameBest;
+  const msg = score <= 5 ? "Nog wat oefenen, rookie! 💪"
+    : score <= 15 ? "Netjes! Rebel Proty knikt goedkeurend."
+    : "Legend! Rebel Proty is met trots. 👑";
+  document.getElementById("rsMsg").textContent = msg;
+  document.getElementById("gameResult").classList.add("open");
+  const again = document.getElementById("gameAgain");
+  const close = document.getElementById("gameClose");
+  const a = () => { again.removeEventListener("click", a); close.removeEventListener("click", c);
+    document.getElementById("gameResult").classList.remove("open"); gameStart(); };
+  const c = () => { again.removeEventListener("click", a); close.removeEventListener("click", c);
+    document.getElementById("gameResult").classList.remove("open");
+    document.getElementById("game").classList.remove("open"); };
+  again.addEventListener("click", a);
+  close.addEventListener("click", c);
 }
 
 function renderQuickAdd() {
@@ -888,14 +1353,16 @@ goalInput.addEventListener("change", () => {
 
 load();
 goalInput.value = state.goal;
+updateSplashText();
 render();
+renderProty();
 
 (function () {
   const splash = document.getElementById("splash");
   window.addEventListener("load", () => {
-    requestAnimationFrame(() => splash.classList.add("shown"));  /* woord fade in */
-    setTimeout(() => splash.classList.add("hidden"), 1600);      /* fade-in 0,6 s + 1 s lezen, daarna langzaam uitfaden */
-    setTimeout(() => { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 2600);
+    requestAnimationFrame(() => splash.classList.add("shown"));  /* eitje + tekst fade in */
+    setTimeout(() => splash.classList.add("hidden"), 2200);      /* leestijd voor eitje + unlocktext */
+    setTimeout(() => { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 3000);
   });
 })();
 </script>

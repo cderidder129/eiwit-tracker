@@ -16,6 +16,7 @@ Open `index.html` in je browser. Meer is er niet nodig: geen installatie, geen s
 - **Dagnavigatie** — blader tussen gisteren, vandaag en morgen; elke dag heeft zijn eigen totaal
 - **Dagdoel** — stel je eiwitdoel in (standaard 100 g) en zie je voortgangsbalk en restant
 - **Doel-gehaald-viering** — bij het overgaan van je dagdoel tekent zich een groen vinkje en dwarrelen confetti in huisstijlkleuren (één keer per dag, respecteert verminderde animatievoorkeur)
+- **Protey-punten & Proty** — elk bereikt dagdoel = 1 PP: 5 PP ontgrendelt Rookie Proty, 10 PP Sporty Proty, 15 PP Rebel Proty; daarna start de minigame "Vang de eiwitten"
 - **Activiteiten afvinken** — vink per dag af wat je hebt gedaan: Schermen, Klimmen, Basic Fit of Thuisoefeningen
 - **Lokale opslag** — al je gegevens blijven in je eigen browser (localStorage), niets gaat naar een server
 
