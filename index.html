@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Protey — Eiwit Tracker</title>
+<title>Proty — Eiwit Tracker</title>
 <meta name="theme-color" content="#101014">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -405,39 +405,6 @@
   }
   .game-actions .close-g { background: var(--card2); border: 1px solid var(--border); }
 
-  .activities h2 { font-size: 1rem; margin-bottom: 10px; color: var(--muted); }
-  .activity-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  @media (max-width: 420px) {
-    .activity-list { grid-template-columns: 1fr; }
-  }
-  .activity {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 500;
-    user-select: none;
-    transition: border-color 0.15s ease, background 0.15s ease;
-  }
-  .activity:hover { border-color: var(--accent); }
-  .activity input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--rose);
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .activity input[type="checkbox"]:checked + span { color: var(--rose); }
-
   .settings-row {
     display: flex;
     align-items: center;
@@ -463,7 +430,7 @@
 </div>
 
 <div class="app">
-  <h1>💪 Protey</h1>
+  <h1>💪 Proty</h1>
   <p class="subtitle">Voer je voeding en grammen in — het eiwittotaal rekenen wij uit.</p>
 
   <div class="date-nav">
@@ -499,11 +466,6 @@
   <div class="card entries">
     <h2 id="entriesTitle">Toegevoegd</h2>
     <div id="entryList"></div>
-  </div>
-
-  <div class="card activities">
-    <h2 id="activitiesTitle">Activiteiten vandaag</h2>
-    <div class="activity-list" id="activityList"></div>
   </div>
 
   <div class="card">
@@ -551,7 +513,7 @@
         <div class="rs-msg" id="rsMsg"></div>
         <div class="game-actions">
           <button type="button" id="gameAgain">Speel opnieuw</button>
-          <button type="button" class="close-g" id="gameClose">Terug naar Protey</button>
+          <button type="button" class="close-g" id="gameClose">Terug naar Proty</button>
         </div>
       </div>
     </div>
@@ -637,7 +599,6 @@ const FOOD_DB = [
 const STORAGE_KEY = "eiwit-tracker-v1";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-const ACTIVITIES = ["Schermen", "Klimmen", "Basic Fit", "Thuisoefeningen"];
 
 const PROTY_LEVELS = [
   { n: 5,  name: "Rookie", desc: "Het enthousiaste beginnende kuiken." },
@@ -647,7 +608,6 @@ const PROTY_LEVELS = [
 
 let state = {
   entries: {},
-  activities: {},
   goal: 100,
   customFoods: [],
   recent: [],
@@ -674,7 +634,6 @@ function load() {
       const data = JSON.parse(raw);
       if (data && typeof data === "object") {
         state.entries = data.entries || {};
-        state.activities = data.activities || {};
         state.goal = Number(data.goal) > 0 ? Number(data.goal) : 100;
         state.customFoods = Array.isArray(data.customFoods) ? data.customFoods : [];
         state.recent = Array.isArray(data.recent) ? data.recent : [];
@@ -690,7 +649,6 @@ function load() {
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     entries: state.entries,
-    activities: state.activities,
     goal: state.goal,
     customFoods: state.customFoods,
     recent: state.recent,
@@ -752,28 +710,6 @@ function render() {
 
   document.getElementById("entriesTitle").textContent =
     state.offset === 0 ? "Vandaag toegevoegd" : "Toegevoegd";
-  document.getElementById("activitiesTitle").textContent =
-    state.offset === 0 ? "Activiteiten vandaag" : "Activiteiten";
-
-  const actEl = document.getElementById("activityList");
-  actEl.innerHTML = "";
-  const done = state.activities[dateKeyForOffset(state.offset)] || [];
-  ACTIVITIES.forEach((a) => {
-    const label = document.createElement("label");
-    label.className = "activity";
-
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.checked = done.includes(a);
-    cb.addEventListener("change", () => toggleActivity(a, cb.checked));
-
-    const span = document.createElement("span");
-    span.textContent = a;
-
-    label.appendChild(cb);
-    label.appendChild(span);
-    actEl.appendChild(label);
-  });
 
   const listEl = document.getElementById("entryList");
   listEl.innerHTML = "";
@@ -815,17 +751,6 @@ function render() {
 
   renderQuickAdd();
   renderProty();
-}
-
-function toggleActivity(name, checked) {
-  const key = dateKeyForOffset(state.offset);
-  const arr = state.activities[key] || (state.activities[key] = []);
-  if (checked && !arr.includes(name)) arr.push(name);
-  if (!checked) {
-    state.activities[key] = arr.filter((x) => x !== name);
-    if (state.activities[key].length === 0) delete state.activities[key];
-  }
-  save();
 }
 
 function addEntry(food, grams, per100) {
@@ -996,10 +921,11 @@ function updateSplashText() {
   if (!el) return;
   const nxt = nextLevelInfo();
   if (nxt) {
+    const rest = nxt.n - state.pp;
     el.innerHTML = "Unlock " + nxt.name + " Proty na " + nxt.n + " bereikte dagdoelen" +
-      (state.pp > 0 ? "<small>" + state.pp + "/" + nxt.n + "</small>" : "");
+      "<small>Nog " + rest + " Proty-punt" + (rest === 1 ? "" : "en") + "</small>";
   } else {
-    el.innerHTML = "Rebel Proty is klaar voor actie<small>Speel de minigame in de Proty-kaart</small>";
+    el.innerHTML = "Rebel Proty is klaar voor actie<small>" + state.pp + " Proty-punten · speel de minigame in de Proty-kaart</small>";
   }
 }
 
@@ -1011,7 +937,7 @@ function renderProty() {
   if (lvl === 0) {
     art = eggSVG();
     title = "Wie is Proty?";
-    desc = "Haal je dagdoel om Proty te ontgrendelen. Elk bereikt dagdoel = 1 Protey-punt.";
+    desc = "Haal je dagdoel om Proty te ontgrendelen. Elk bereikt dagdoel = 1 Proty-punt.";
   } else {
     art = protySVG(lvl);
     const L = PROTY_LEVELS[lvl - 1];
@@ -1020,11 +946,11 @@ function renderProty() {
   }
   if (nxt) {
     const rest = nxt.n - state.pp;
-    extra = '<div class="pp"><b>' + state.pp + '</b> Protey-punten</div>' +
+    extra = '<div class="pp"><b>' + state.pp + '</b> Proty-punten</div>' +
       '<div class="next">Nog ' + rest + ' dagdoel' + (rest === 1 ? "" : "en") + ' tot ' + nxt.name + ' Proty</div>' +
       '<div class="proty-progress"><div style="width:' + Math.min(state.pp / nxt.n * 100, 100) + '%"></div></div>';
   } else {
-    extra = '<div class="pp"><b>' + state.pp + '</b> Protey-punten</div>' +
+    extra = '<div class="pp"><b>' + state.pp + '</b> Proty-punten</div>' +
       '<button type="button" class="game-btn">🎮 Speel \u201cVang de eiwitten\u201d met Rebel Proty</button>';
   }
   el.innerHTML = '<div class="art">' + art + '</div>' +
@@ -1348,11 +1274,27 @@ goalInput.addEventListener("change", () => {
   state.goal = v > 0 ? v : 100;
   goalInput.value = state.goal;
   save();
+  catchUpPP();
   render();
 });
 
+/* Inhaalcheck: was het doel van vandaag al bereikt (bv. vóór de laatste
+   update, of doordat het doel tussendoor is verlaagd)? Dan telt vandaag
+   alsnog 1 Proty-punt — stil, zonder confetti. */
+function catchUpPP() {
+  if (state.goal <= 0) return;
+  const key = dateKeyForOffset(0);
+  const tot = (state.entries[key] || []).reduce((s, e) => s + e.protein, 0);
+  if (tot >= state.goal && !state.scored[key]) {
+    state.scored[key] = true;
+    state.pp++;
+    save();
+  }
+}
+
 load();
 goalInput.value = state.goal;
+catchUpPP();
 updateSplashText();
 render();
 renderProty();
