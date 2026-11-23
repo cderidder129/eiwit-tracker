@@ -13,6 +13,7 @@ Open `index.html` in je browser. Meer is er niet nodig: geen installatie, geen s
 - **Automatisch eiwit opzoeken** — staat een product niet in de lijst, dan zoekt de app online (Open Food Facts) naar het eiwitgehalte per 100 g, ook voor merkproducten
 - **Onbekende producten onthouden** — vul eenmalig het eiwit per 100 g in, daarna staat het in de lijst
 - **Snel toevoegen** — je laatst gebruikte producten + grammen verschijnen als tikknoppen onder het formulier; één keer ingevoerd = daarna één tik
+- **Slimme standaardporties** — kies waar beschikbaar tussen "Portie" en "Gram": een hoeveelheidselector (−/+) met herkenbare porties (1 snede brood ≈ 35 g, 1 ei ≈ 50 g, 1 handje noten ≈ 30 g, …). Eigen gewicht per portie aanpasbaar en wordt onthouden; bruikbare portiegewichten uit Open Food Facts worden ook gebruikt. Portiegewichten zijn duidelijk gemarkeerd als schatting (≈)
 - **Dagnavigatie** — blader tussen gisteren, vandaag en morgen; elke dag heeft zijn eigen totaal
 - **Dagdoel** — stel je eiwitdoel in (standaard 100 g) en zie je voortgangsbalk en restant
 - **Doel-gehaald-viering** — bij het overgaan van je dagdoel tekent zich een groen vinkje en dwarrelen confetti in huisstijlkleuren (één keer per dag, respecteert verminderde animatievoorkeur)
